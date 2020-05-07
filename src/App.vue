@@ -97,7 +97,7 @@
         <ElTabPane label="异常信息" name="exptinfo">
           <div class="content" id="exptinfo-tabs">
             <div class="placeholder-header"></div>
-            <nav class="nav-fixed" id="navFixed">
+            <nav class="nav-fixed" id="exptinfo-tabs-container">
               <div
                 class="sysinfo-btn active"
                 data-index="1"
@@ -129,7 +129,7 @@
             </nav>
           </div>
           <div id="exptinfo-view-container">
-            <div id="exptinfo-part2">
+            <div class="exptinfo-floor exptinfo-view-1">
               <el-tag>磁盘使用率</el-tag>
             </div>
           </div>
@@ -162,6 +162,9 @@ export default {
     };
   },
   methods: {
+    onChange(link) {
+      console.log("Anchor:OnChange", link);
+    },
     handleRouter(tab) {
       const index = tab.index;
       console.log("index===>", index);
@@ -182,6 +185,7 @@ export default {
           //
         } else if (index == 2) {
           //
+          this.queryErrorInfo();
         }
       });
     },
@@ -465,35 +469,46 @@ export default {
       this.drawChart(option);
     },
     query24hWithNoParams() {
-      this.$axios({
-        method: "get",
-        url: "http://192.168.80.130:5001/api/server_manage/" // 接口地址
-      })
-        .then(response => {
-          this.__noparamsof24h__ = response;
-          this.mock();
+      if (process.env.NODE_ENV !== "local") {
+        this.$axios({
+          method: "get",
+          url: "http://192.168.80.130:5001/api/server_manage/" // 接口地址
         })
-        .catch(error => {
-          console.log(error);
-          this.mock();
-        });
-      // 失败的返回
+          .then(response => {
+            this.__noparamsof24h__ = response;
+            this.mock();
+          })
+          .catch(error => {
+            console.log(error);
+            this.mock();
+          });
+        // 失败的返回
+      } else {
+        this.mock();
+      }
     },
     query24hWithParams(data) {
-      this.$axios({
-        method: "post",
-        url: "http://192.168.80.130:5001/api/server_manage/", // 接口地址
-        data
-      })
-        .then(response => {
-          console.log(response, "success"); // 成功的返回
-          this.__noparamsof24h__ = response;
-          this.mock(response);
+      if (process.env.NODE_ENV !== "local") {
+        this.$axios({
+          method: "post",
+          url: "http://192.168.80.130:5001/api/server_manage/", // 接口地址
+          data
         })
-        .catch(error => {
-          console.log(error);
-          this.mock();
-        });
+          .then(response => {
+            console.log(response, "success"); // 成功的返回
+            this.__noparamsof24h__ = response;
+            this.mock(response);
+          })
+          .catch(error => {
+            console.log(error);
+            this.mock();
+          });
+      } else {
+        this.mock();
+      }
+    },
+    queryErrorInfo() {
+      //
     },
     switchQueryInfo() {
       const data = {
@@ -512,9 +527,7 @@ export default {
       };
       this.query24hWithParams(data);
     },
-    queryErrorInfo() {
-      //
-    },
+
     handleScroll() {
       const scrollTop =
         window.pageYOffset ||
@@ -524,6 +537,7 @@ export default {
     }
   },
   mounted() {
+    console.log("process.env.NODE_ENV", process.env.NODE_ENV);
     setTimeout(() => {
       const sysinfo = document.querySelector("#tab-sysinfo");
       const offsetLeft = sysinfo.offsetLeft;
@@ -715,11 +729,11 @@ export default {
 }
 #pane-exptinfo {
   #exptinfo-tabs {
-    position: fixed;
-    background-color: #fff;
-    top: 64px; // 44px是导航标题头的高度
-    z-index: 999;
-    width: 95%;
+    // position: fixed;
+    // background-color: #fff;
+    // top: 64px; // 44px是导航标题头的高度
+    // z-index: 999;
+    // width: 95%;
     #exptinfo-tabs-container {
       display: flex;
       justify-content: space-between;
@@ -742,6 +756,18 @@ export default {
         border-radius: 2px;
       }
     }
+  }
+  .el-tag.el-tag--light {
+    width: 25.86%;
+    height: 27px;
+    line-height: 27px;
+    background-color: #e1fbf0;
+    color: #54bb91;
+    font-size: 14px;
+    border: none;
+  }
+  .exptinfo-floor {
+    margin-top: 12px;
   }
 }
 

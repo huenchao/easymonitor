@@ -7,17 +7,14 @@ import axios from "axios";
 import echarts from "echarts";
 import noparamsof24h from "./mock/noparamsof24h";
 import errorInfo from "./mock/error";
-// import paramsof4h from "./assets/mock/paramsof4h";
-// import paramsof24h from "./assets/mock/paramsof24h";
+
 
 Vue.prototype.$echarts = echarts;
 console.log(`noparamsof24h`,noparamsof24h);
-// console.log(`paramsof4h`,paramsof4h);
-// console.log(`paramsof24h`,paramsof24h);
+
 Vue.prototype.__noparamsof24h__ = noparamsof24h
 Vue.prototype.__errorInfo__ = errorInfo
-// Vue.prototype.__paramsof24h = paramsof24h 
-// Vue.prototype.__paramsof4h = paramsof4h 
+
 
 
 Vue.prototype.$axios = axios 
