@@ -5,13 +5,12 @@ import store from "./store";
 import { Tabs,TabPane,Select,Option,Tag,TableColumn,Table,Switch,Button } from 'element-ui';
 import axios from "axios";
 import echarts from "echarts";
-Vue.prototype.$echarts = echarts;
-
 import noparamsof24h from "./mock/noparamsof24h";
 import errorInfo from "./mock/error";
 // import paramsof4h from "./assets/mock/paramsof4h";
 // import paramsof24h from "./assets/mock/paramsof24h";
 
+Vue.prototype.$echarts = echarts;
 console.log(`noparamsof24h`,noparamsof24h);
 // console.log(`paramsof4h`,paramsof4h);
 // console.log(`paramsof24h`,paramsof24h);

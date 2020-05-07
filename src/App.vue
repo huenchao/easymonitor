@@ -95,14 +95,44 @@
         </ElTabPane>
         <ElTabPane label="应用信息" name="appinfo">系统信息组件2</ElTabPane>
         <ElTabPane label="异常信息" name="exptinfo">
-          <el-tabs v-model="activeName" @tab-click="handleClick">
-            <el-tab-pane label="用户管理" name="first">用户管理</el-tab-pane>
-            <el-tab-pane label="配置管理" name="second">配置管理</el-tab-pane>
-            <el-tab-pane label="角色管理" name="third">角色管理</el-tab-pane>
-            <el-tab-pane label="定时任务补偿" name="fourth"
-              >定时任务补偿</el-tab-pane
-            >
-          </el-tabs>
+          <div class="content" id="exptinfo-tabs">
+            <div class="placeholder-header"></div>
+            <nav class="nav-fixed" id="navFixed">
+              <div
+                class="sysinfo-btn active"
+                data-index="1"
+                @click="changeChartsInSys"
+              >
+                CPU使用率
+              </div>
+              <div
+                class="sysinfo-btn"
+                data-index="2"
+                @click="changeChartsInSys"
+              >
+                服务器线程数
+              </div>
+              <div
+                class="sysinfo-btn"
+                data-index="3"
+                @click="changeChartsInSys"
+              >
+                SWAP信息
+              </div>
+              <div
+                class="sysinfo-btn"
+                data-index="4"
+                @click="changeChartsInSys"
+              >
+                程序异常信息
+              </div>
+            </nav>
+          </div>
+          <div id="exptinfo-view-container">
+            <div id="exptinfo-part2">
+              <el-tag>磁盘使用率</el-tag>
+            </div>
+          </div>
         </ElTabPane>
       </ElTabs>
     </div>
@@ -484,6 +514,13 @@ export default {
     },
     queryErrorInfo() {
       //
+    },
+    handleScroll() {
+      const scrollTop =
+        window.pageYOffset ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop;
+      console.log(scrollTop);
     }
   },
   mounted() {
@@ -493,7 +530,11 @@ export default {
       const bar = document.querySelector(".el-tabs__active-bar.is-top");
       bar.style.transform = `translateX(${offsetLeft}px)`;
     });
+    window.addEventListener("scroll", this.handleScroll);
     this.query24hWithNoParams();
+  },
+  destroyed() {
+    window.removeEventListener("scroll", this.handleScroll);
   }
 };
 </script>
@@ -670,6 +711,46 @@ export default {
     .sysinfoSwapInfoLvGap {
       color: #868686;
     }
+  }
+}
+#pane-exptinfo {
+  #exptinfo-tabs {
+    position: fixed;
+    background-color: #fff;
+    top: 64px; // 44px是导航标题头的高度
+    z-index: 999;
+    width: 95%;
+    #exptinfo-tabs-container {
+      display: flex;
+      justify-content: space-between;
+      .sysinfo-btn {
+        padding: 3px;
+        text-align: center;
+        border: 1px solid #54bb91;
+        border-radius: 2px;
+        border-radius: 2px;
+        font-size: 12px;
+        color: #868686;
+        letter-spacing: 0;
+      }
+      .sysinfo-btn.active {
+        font-size: 12px;
+        color: #f3f8fb;
+        letter-spacing: 0;
+        background: #54bb91;
+        border-radius: 2px;
+        border-radius: 2px;
+      }
+    }
+  }
+}
+
+#searchBar {
+  .isFixed {
+    position: fixed;
+    background-color: #fff;
+    top: 44px; // 44px是导航标题头的高度
+    z-index: 999;
   }
 }
 </style>
