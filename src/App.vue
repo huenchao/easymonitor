@@ -129,9 +129,10 @@
             </nav>
           </div>
           <div id="exptinfo-view-container">
-            <div class="exptinfo-floor exptinfo-view-1">
-              <el-tag>磁盘使用率</el-tag>
+            <div class="exptinfo-floor exptinfo-view-1 exptinfo-view-cpu">
+              <el-tag>CPU使用率</el-tag>
             </div>
+
           </div>
         </ElTabPane>
       </ElTabs>
@@ -470,11 +471,16 @@ export default {
       this.drawChart(option);
     },
     mock4err() {
-       this.sysinfoIpLists = this.__noparamsof24h__.data.ip_list;
+      const tmpc = this.__errorInfo__.data.error_info.cpu_info;
+      const tmpa = this.__errorInfo__.data.error_info.app_info;
+      const tmpd = this.__errorInfo__.data.error_info.disk_info;
+      const tmps = this.__errorInfo__.data.error_info.swap_info;
+
     },
     //查询系统信息(不带参数)
     query24hWithNoParams() {
       if (process.env.NODE_ENV !== "local") {
+        console.log('测试跑的路径-----------》')
         this.$axios({
           method: "get",
           url: "http://192.168.80.130:5001/api/server_manage/" // 接口地址
@@ -526,7 +532,7 @@ export default {
           })
           .catch(error => {
             console.log(error);
-            this.mock4sys();
+            this.mock4err();
           });
         // 失败的返回
       } else {
