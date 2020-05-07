@@ -407,7 +407,8 @@ export default {
       const option = this.modifyChartsOptions(+this.sysinfoTabIndex);
       this.drawChart(option);
     },
-    mock() {
+    //模拟系统信息数据
+    mock4sys() {
       this.sysinfoIpLists = this.__noparamsof24h__.data.ip_list;
       this.sysinfoDiskInfo = this.__noparamsof24h__.data.server_info.disk_info.map(
         item => {
@@ -468,6 +469,10 @@ export default {
       const option = this.modifyChartsOptions(1);
       this.drawChart(option);
     },
+    mock4err() {
+       this.sysinfoIpLists = this.__noparamsof24h__.data.ip_list;
+    },
+    //查询系统信息(不带参数)
     query24hWithNoParams() {
       if (process.env.NODE_ENV !== "local") {
         this.$axios({
@@ -476,17 +481,18 @@ export default {
         })
           .then(response => {
             this.__noparamsof24h__ = response;
-            this.mock();
+            this.mock4sys();
           })
           .catch(error => {
             console.log(error);
-            this.mock();
+            this.mock4sys();
           });
         // 失败的返回
       } else {
-        this.mock();
+        this.mock4sys();
       }
     },
+    //查询系统信息(带参数)
     query24hWithParams(data) {
       if (process.env.NODE_ENV !== "local") {
         this.$axios({
@@ -497,18 +503,35 @@ export default {
           .then(response => {
             console.log(response, "success"); // 成功的返回
             this.__noparamsof24h__ = response;
-            this.mock(response);
+            this.mock4sys(response);
           })
           .catch(error => {
             console.log(error);
-            this.mock();
+            this.mock4sys();
           });
       } else {
-        this.mock();
+        this.mock4sys();
       }
     },
+    //查询异常信息的接口
     queryErrorInfo() {
-      //
+      if (process.env.NODE_ENV !== "local") {
+        this.$axios({
+          method: "get",
+          url: "http://192.168.80.130:5001/api/error_info/" // 接口地址
+        })
+          .then(response => {
+            this.__errorInfo__ = response;
+            this.mock4sys();
+          })
+          .catch(error => {
+            console.log(error);
+            this.mock4sys();
+          });
+        // 失败的返回
+      } else {
+        this.mock4sys();
+      }
     },
     switchQueryInfo() {
       const data = {
