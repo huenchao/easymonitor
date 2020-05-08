@@ -4,6 +4,12 @@
     text-align: center;
     color: #2c3e50;
   }
+  .app_err{
+    color: #DE4848,
+  }
+  .app_healthy{
+    color: #54BB91,
+  }
   .exptinfo-show-error{
     font-size: 15px;
 color: #DE4848;
@@ -11,6 +17,7 @@ letter-spacing: 0;
 float: right;
 margin-right: 20px;
 margin-top: 17px;
+padding-right: 25px;
   }
   
   .nomalgap {
@@ -188,7 +195,55 @@ margin-top: 17px;
       }
     }
   }
+  #pane-appinfo{
+    table th,table td{
+      vertical-align: middle;
+      text-align: center;  
+    }
+    #appinfo-part1 {
+      display: flex;
+      align-items: center;
+      margin-bottom: 18px;
+      #appinfo-part1-selecttip {
+        width: 1%;
+        height: 23px;
+        margin-right: 5%;
+        background-color: #54bb91;
+      }
+      .el-select-dropdown__item.selected {
+        color: #323232;
+      }
+      .el-select.el-select--medium {
+        width: 88.26%;
+        height: 38px;
+      }
+    }
+  }
+
   #pane-exptinfo {
+    table th,table td{
+      vertical-align: middle;
+      text-align: center;  
+    }
+    .exptinfo-view-swap{
+        table td:nth-child(odd) div{
+        vertical-align: middle;
+        text-align: left;  
+        padding-left: 33px;
+      }
+      table td:nth-child(even) div{
+        vertical-align: middle;
+        text-align: right;  
+        padding-right: 33px;
+      }
+    }
+    .exptinfo-view-app{
+      table td:nth-child(odd) div{
+        vertical-align: middle;
+        text-align: left;  
+        padding-left: 33px;
+      }
+    }
     .errinfo-btn {
       padding: 3px;
       border: 1px solid #54bb91;

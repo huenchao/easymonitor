@@ -95,7 +95,43 @@
             </div>
           </div>
         </ElTabPane>
-        <ElTabPane label="应用信息" name="appinfo">系统信息组件2</ElTabPane>
+        <ElTabPane label="应用信息" name="appinfo">
+          <div id="appinfo-part1">
+            <div id="appinfo-part1-selecttip"></div>
+            <ElSelect
+              v-model="appinfoValue"
+              size="medium"
+              @change="changeIpHandle4appinfo"
+            >
+              <ElOption
+                v-for="item in appinfoIpLists"
+                :key="`${item}${Math.random()}`"
+                :label="item"
+                :value="item"
+              >
+              </ElOption>
+            </ElSelect>
+          </div>
+          <div id="appinfo-part2">
+            <el-table :data="appInfo" style="width: 100%">
+              <el-table-column prop="app_name" label="程序" fixed="left">
+              </el-table-column>
+              <el-table-column label="健康状况" fixed="right">
+                <template slot-scope="scope">
+                  <span
+                    :class="[
+                      appInfo[scope.$index].error_flag
+                        ? 'app_err'
+                        : 'app_healthy'
+                    ]"
+                    style="font-size:15px; text-align: center;"
+                    >{{ appInfo[scope.$index].error_flag ? "异常" : "健康" }}
+                  </span>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+        </ElTabPane>
         <ElTabPane label="异常信息" name="exptinfo">
           <div class="content" id="exptinfo-tabs">
             <div
@@ -270,10 +306,13 @@ export default {
   },
   data() {
     return {
+      appinfoIpLists: [],
+      appinfoValue: "",
       sysinfoValue: "",
       sysinfoIpLists: [],
       activeName: "sysinfo",
       sysinfoDiskInfo: [],
+      appInfo: [],
       sysinfoCPUInfo: [],
       sysinfoSwapInfo: {
         data1: [],
@@ -303,6 +342,13 @@ export default {
     };
   },
   methods: {
+    changeIpHandle4appinfo(e) {
+      this.appinfoValue = e;
+      const data = {
+        ip: this.appinfoValue
+      };
+      this.queryAppWithParams(data);
+    },
     //获取当前元素的offsetTop
     getOffsetTop(obj) {
       let offsetTop = 0;
@@ -333,7 +379,7 @@ export default {
         if (index == 0) {
           this.query24hWithNoParams();
         } else if (index == 1) {
-          //
+          this.queryAppWithNoParams();
         } else if (index == 2) {
           this.tabsHeight = this.$refs.myTabs.offsetHeight;
           this.queryErrorInfo();
@@ -642,7 +688,7 @@ export default {
       });
     },
     //模拟系统信息数据
-    mock4sys() {
+    mock4sys(withP) {
       this.sysinfoIpLists = this.__noparamsof24h__.data.ip_list;
       this.sysinfoDiskInfo = this.__noparamsof24h__.data.server_info.disk_info.map(
         item => {
@@ -699,9 +745,19 @@ export default {
       this.sysinfoSwapInfo.x = tmpx;
       this.sysinfoCPUInfo = tmpcpu;
       this.sysinfoThreadInfo = tmpthread;
-      this.sysinfoValue = this.sysinfoIpLists[0];
+      if (!withP) {
+        this.sysinfoValue = this.sysinfoIpLists[0];
+      }
+
       const option = this.modifyChartsOptions4sys(1);
       this.drawChart(option, "sysinfo-part3-echarts");
+    },
+    mock4app(withP) {
+      this.appinfoIpLists = this.__noparamsofapp__.data.ip_list;
+      if (!withP) {
+        this.appinfoValue = this.appinfoIpLists[0];
+      }
+      this.appInfo = this.__noparamsofapp__.data.app_info.app_info;
     },
     mock4err() {
       const tmpc = this.__errorInfo__.data.error_info.cpu_info;
@@ -837,14 +893,53 @@ export default {
           .then(response => {
             console.log(response, "success"); // 成功的返回
             this.__noparamsof24h__ = response;
-            this.mock4sys(response);
+            this.mock4sys(true);
           })
           .catch(error => {
             console.log(error);
-            this.mock4sys();
+            this.mock4sys(true);
           });
       } else {
-        this.mock4sys();
+        this.mock4sys(true);
+      }
+    },
+    queryAppWithNoParams() {
+      if (process.env.NODE_ENV !== "local") {
+        this.$axios({
+          method: "get",
+          url: "http://192.168.80.130:5001/mobile/server_manage/" // 接口地址
+        })
+          .then(response => {
+            this.__noparamsofapp__ = response;
+            this.mock4app();
+          })
+          .catch(error => {
+            console.log(error);
+            this.mock4app();
+          });
+        // 失败的返回
+      } else {
+        this.mock4app();
+      }
+    },
+    queryAppWithParams(data) {
+      if (process.env.NODE_ENV !== "local") {
+        this.$axios({
+          method: "post",
+          url: "http://192.168.80.130:5001/mobile/server_manage/", // 接口地址
+          data
+        })
+          .then(response => {
+            console.log(response, "success"); // 成功的返回
+            this.__noparamsofapp__ = response;
+            this.mock4app(true);
+          })
+          .catch(error => {
+            console.log(error);
+            this.mock4app(true);
+          });
+      } else {
+        this.mock4app(true);
       }
     },
     //查询异常信息的接口
@@ -873,12 +968,13 @@ export default {
         // eslint-disable-next-line
         time_flag: this.sysinfoSwitch ? 15 : 1
       };
-      console.log("data", data);
       this.query24hWithParams(data);
     },
-    changeIpHandle() {
+    changeIpHandle(e) {
+      this.sysinfoValue = e;
+      console.log(e);
       const data = {
-        ip: this.sysinfoValue,
+        ip: e,
         // eslint-disable-next-line
         time_flag: ''
       };
@@ -928,7 +1024,11 @@ export default {
       });
     }
   },
+  created() {
+    document.title = "生产监控";
+  },
   mounted() {
+    document.title = "生产监控";
     setTimeout(() => {
       const sysinfo = document.querySelector("#tab-sysinfo");
       const offsetLeft = sysinfo.offsetLeft;

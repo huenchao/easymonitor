@@ -6,6 +6,7 @@ import { Tabs,TabPane,Select,Option,Tag,TableColumn,Table,Switch,Button } from '
 import axios from "axios";
 import echarts from "echarts";
 import noparamsof24h from "./mock/noparamsof24h";
+import noparamsofapp from "./mock/app";
 import errorInfo from "./mock/error";
 
 
@@ -13,6 +14,7 @@ Vue.prototype.$echarts = echarts;
 console.log(`noparamsof24h`,noparamsof24h);
 
 Vue.prototype.__noparamsof24h__ = noparamsof24h
+Vue.prototype.__noparamsofapp__ = noparamsofapp
 Vue.prototype.__errorInfo__ = errorInfo
 
 
