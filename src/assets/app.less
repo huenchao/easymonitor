@@ -1,0 +1,315 @@
+#app {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+  }
+  .exptinfo-show-error{
+    font-size: 15px;
+color: #DE4848;
+letter-spacing: 0;
+float: right;
+margin-right: 20px;
+margin-top: 17px;
+  }
+  
+  .nomalgap {
+    background: #ececec;
+    width: 100%;
+    height: 6px;
+    margin-top:19px;
+  }
+  .line-4-echarts{
+    border: 1px solid #EAEAEA;
+    position: absolute;
+    bottom: 20px;
+    width: 96%;
+  }
+  #nav {
+    margin: 0 auto;
+    .el-tabs__nav.is-top {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      float: none;
+    }
+    .el-tabs__item.is-top {
+      color: #868686;
+      font-size: 14px;
+    }
+    .el-tabs__item.is-top.is-active {
+      color: #323232;
+      font-size: 16px;
+    }
+    .el-tabs__active-bar {
+      background-color: #54bb91;
+      height: 4px;
+    }
+    #tab-sysinfo,
+    #tab-appinfo,
+    #tab-exptinfo {
+      padding: 0;
+    }
+  }
+  #pane-sysinfo {
+    #sysinfo-part1 {
+      display: flex;
+      align-items: center;
+      margin-bottom: 18px;
+      #sysinfo-part1-selecttip {
+        width: 1%;
+        height: 23px;
+        margin-right: 5%;
+        background-color: #54bb91;
+      }
+      .el-select-dropdown__item.selected {
+        color: #323232;
+      }
+      .el-select.el-select--medium {
+        width: 88.26%;
+        height: 38px;
+      }
+    }
+    #sysinfo-part2 {
+      .el-tag.el-tag--light {
+        width: 25.86%;
+        height: 27px;
+        line-height: 27px;
+        background-color: #e1fbf0;
+        color: #54bb91;
+        font-size: 14px;
+        border: none;
+      }
+      th div.cell {
+        font-size: 13px;
+        color: #868686;
+        letter-spacing: 0;
+      }
+      .el-table th {
+        padding: 6px 0;
+      }
+      th div.cell {
+        font-weight: 400;
+        font-size: 13px;
+        color: #868686;
+        letter-spacing: 0;
+        padding: 0 0 0 12%;
+      }
+      th:last-child div.cell {
+        display: flex;
+        justify-content: flex-end;
+        padding: 0 12% 0 0;
+      }
+  
+      td div.cell {
+        font-size: 13px;
+        color: #323230;
+        letter-spacing: 0;
+        padding: 0 0 0 12%;
+      }
+      td:last-child div.cell {
+        font-size: 15px;
+        color: #54bb91;
+        letter-spacing: 0;
+        display: flex;
+        justify-content: flex-end;
+        padding: 0 12% 0 0;
+      }
+    }
+
+    #sysinfo-part3 {
+      position: relative;
+      #sysinfo-part3-switch {
+        margin-top: 10px;
+        .el-switch__label {
+          font-size: 13px;
+          color: #8c99a6;
+        }
+      }
+      #sysinfo-view {
+        margin-top: -5px;
+      }
+      #sysinfo-part3-tabs {
+        margin-top: 12px;
+        display: flex;
+        justify-content: space-around;
+        .sysinfo-btn {
+          padding: 3px 12px;
+          border: 1px solid #54bb91;
+          border-radius: 2px;
+          border-radius: 2px;
+          font-size: 13px;
+          color: #868686;
+          letter-spacing: 0;
+        }
+        .sysinfo-btn.active {
+          font-size: 13px;
+          color: #f3f8fb;
+          letter-spacing: 0;
+          background: #54bb91;
+          border-radius: 2px;
+          border-radius: 2px;
+        }
+      }
+      #sysinfo-part3-echarts-title {
+        position: absolute;
+        left: 50%;
+        bottom: 180px;
+        transform: translateX(-50%);
+        #sysinfo-part3-echarts-title-g {
+          font-family: Impact;
+          font-size: 21px;
+          color: #54bb91;
+          font-weight: 600;
+        }
+      }
+      #sysinfo-part3-echarts-bottom {
+        position: absolute;
+        left: 50%;
+        bottom: -0;
+        z-index: 666;
+        font-weight: 300;
+        font-size: 12px;
+        transform: translateX(-50%);
+      }
+      .sysinfoSwapInfoLv,
+      .sysinfoSwapInfoRv,
+      .sysinfoSwapInfoLvGap {
+        font-size: 21px;
+        color: #54bb91;
+        font-weight: 600;
+        padding: 3px;
+      }
+      .sysinfoSwapInfoRv {
+        color: #ff7c00;
+      }
+      .sysinfoSwapInfoLvGap {
+        color: #868686;
+      }
+    }
+  }
+  #pane-exptinfo {
+    .errinfo-btn {
+      padding: 3px;
+      border: 1px solid #54bb91;
+      border-radius: 2px;
+      border-radius: 2px;
+      font-size: 13px;
+      color: #868686;
+      letter-spacing: 0;
+    }
+
+    .errinfo-btn.active {
+      font-size: 13px;
+      color: #f3f8fb;
+      letter-spacing: 0;
+      background: #54bb91;
+      border-radius: 2px;
+      border-radius: 2px;
+    }
+
+    #exptinfo-tabs {
+      position: relative;
+      box-sizing: content-box;
+      #placeholder-header.fixed{
+        position: fixed;
+        width: 94%;
+        z-index: 999;
+        top: 5px;
+        background-color: rgb(255, 255, 255);
+      }
+      #placeholder-header{
+        width: 98%;
+      }
+      #exptinfo-tabs-container {
+        display: flex;
+        justify-content: space-between;
+        .sysinfo-btn {
+          padding: 3px;
+          text-align: center;
+          border: 1px solid #54bb91;
+          border-radius: 2px;
+          border-radius: 2px;
+          font-size: 12px;
+          color: #868686;
+          letter-spacing: 0;
+        }
+        .sysinfo-btn.active {
+          font-size: 12px;
+          color: #f3f8fb;
+          letter-spacing: 0;
+          background: #54bb91;
+          border-radius: 2px;
+          border-radius: 2px;
+        }
+      }
+    }
+
+    .cell{
+      font-size: 12px;
+      text-align: center;
+      color: #323230;
+    }
+
+    tr td:last-child .cell{
+      color: #54bb91;
+      font-size: 15px;
+      font-weight: 500;
+    }
+    .el-tag.el-tag--light {
+      width: 25.86%;
+      height: 27px;
+      line-height: 27px;
+      background-color: #e1fbf0;
+      color: #54bb91;
+      font-size: 14px;
+      border: none;
+    }
+    .exptinfo-view-app{
+      .cell{
+        font-size: 15px;
+        text-align: left;
+        color: #323230;
+      }
+      tr td:last-child .cell{
+        font-size: 15px;
+        text-align: left;
+        color: #323230;
+      }
+    }
+    .exptinfo-floor {
+      margin-top: 12px;
+    }
+    .exptinfo-show-ip {
+      font-size: 16px;
+      color: #232323;
+      float: left;
+      margin-top: 17px;
+      font-weight: 600;
+    }
+    .syserror-part3-echarts-title {
+      position: absolute;
+      left: 50%;
+      bottom: 180px;
+      transform: translateX(-50%);
+      .syserror-part3-echarts-title-g {
+        font-family: Impact;
+        font-size: 21px;
+        color: #54bb91;
+        font-weight: 600;
+      }
+    }
+    .syserror-part3-echarts-bottom {
+      position: absolute;
+      left: 50%;
+      bottom: 0px;
+      font-weight: 300;
+      font-size: 12px;
+      transform: translateX(-50%);
+    }
+
+    tr:first-child th{
+      border: none;
+      display: none;
+    }
+  }
