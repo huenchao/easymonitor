@@ -386,10 +386,20 @@ export default {
         }
       });
     },
-    drawChart(option, id) {
+    drawChart(option, id, seriesIndexs, dataIndex) {
       // 基于准备好的dom，初始化echarts实例;
       const myChart = this.$echarts.init(document.getElementById(id));
       myChart.setOption(option, true);
+      console.log(`id, seriesIndexs, dataIndex`, id, seriesIndexs, dataIndex);
+      setTimeout(() => {
+        for (let i = 0; i < seriesIndexs; i++) {
+          myChart.dispatchAction({
+            type: "showTip",
+            seriesIndex: i,
+            dataIndex
+          });
+        }
+      });
     },
     modifyChartsOptions4sys(index) {
       let option = {};
@@ -409,6 +419,7 @@ export default {
             formatter: info => {
               const data = info[0].data;
               this.sysinfoViewTop = (+data[1] * 100).toFixed(0);
+              console.log(`data[0]data[0]data[0]`,data[0])
               this.sysinfoViewBottom = data[0];
             }
           },
@@ -428,10 +439,11 @@ export default {
           },
           series: [
             {
+              symbol: "emptyCircle",
               type: "line",
               smooth: true,
-              symbol: "circle",
-              symbolSize: 5,
+              showSymbol: false,
+              symbolSize: 8,
               sampling: "average",
               itemStyle: {
                 color: "#8ec6ad"
@@ -463,8 +475,7 @@ export default {
           animation: false,
           tooltip: {
             triggerOn: "click",
-            show: false,
-            showContent: false,
+            show: true,
             trigger: "axis",
             axisPointer: {
               type: "none"
@@ -491,10 +502,11 @@ export default {
           },
           series: [
             {
+              symbol: "emptyCircle",
               type: "line",
               smooth: true,
-              symbol: "circle",
-              symbolSize: 5,
+              showSymbol: false,
+              symbolSize: 8,
               sampling: "average",
               itemStyle: {
                 color: "#8ec6ad"
@@ -574,7 +586,11 @@ export default {
             series: [
               {
                 name: "swap_in",
+                symbol: "emptyCircle",
                 type: "line",
+                smooth: true,
+                showSymbol: false,
+                symbolSize: 8,
                 data: this.sysinfoSwapInfo.data1,
                 itemStyle: {
                   normal: {
@@ -585,8 +601,12 @@ export default {
                 }
               },
               {
-                name: "swap_out",
+                symbol: "emptyCircle",
                 type: "line",
+                smooth: true,
+                showSymbol: false,
+                symbolSize: 8,
+                name: "swap_out",
                 data: this.sysinfoSwapInfo.data2,
                 itemStyle: {
                   normal: {
@@ -661,7 +681,14 @@ export default {
         e.target.classList.add("active");
       }
       const option = this.modifyChartsOptions4sys(+this.sysinfoTabIndex);
-      this.drawChart(option, "sysinfo-part3-echarts");
+      const serin = +this.sysinfoTabIndex === 3 ? 2 : 1;
+      const len =
+        +this.sysinfoTabIndex === 3
+          ? this.sysinfoSwapInfo.data1.length - 1
+          : +this.sysinfoTabIndex === 2
+          ? this.sysinfoThreadInfo.length - 1
+          : this.sysinfoCPUInfo.length - 1;
+      this.drawChart(option, "sysinfo-part3-echarts", serin, len);
     },
     changeChartsInErr(e) {
       this.isScroll = false;
@@ -750,7 +777,12 @@ export default {
       }
 
       const option = this.modifyChartsOptions4sys(1);
-      this.drawChart(option, "sysinfo-part3-echarts");
+      this.drawChart(
+        option,
+        "sysinfo-part3-echarts",
+        1,
+        this.sysinfoCPUInfo.length - 1
+      );
     },
     mock4app(withP) {
       this.appinfoIpLists = this.__noparamsofapp__.data.ip_list;
