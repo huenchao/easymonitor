@@ -390,7 +390,6 @@ export default {
       // 基于准备好的dom，初始化echarts实例;
       const myChart = this.$echarts.init(document.getElementById(id));
       myChart.setOption(option, true);
-      console.log(`id, seriesIndexs, dataIndex`, id, seriesIndexs, dataIndex);
       setTimeout(() => {
         for (let i = 0; i < seriesIndexs; i++) {
           myChart.dispatchAction({
@@ -419,7 +418,6 @@ export default {
             formatter: info => {
               const data = info[0].data;
               this.sysinfoViewTop = (+data[1] * 100).toFixed(0);
-              console.log(`data[0]data[0]data[0]`,data[0])
               this.sysinfoViewBottom = data[0];
             }
           },
@@ -639,12 +637,25 @@ export default {
           right: 15,
           height: 160
         },
+        tooltip: {
+          triggerOn: "click",
+          show: true,
+          axisPointer: {
+            type: "none"
+          },
+          trigger: "axis",
+          formatter: info => {
+            const data = info[0].data;
+            // console.log(`data`,data,info)
+          }
+        },
         series: [
           {
+            symbol: "emptyCircle",
             type: "line",
             smooth: true,
-            symbol: "circle",
-            symbolSize: 5,
+            showSymbol: false,
+            symbolSize: 8,
             sampling: "average",
             itemStyle: {
               color: "#8ec6ad"
@@ -699,7 +710,10 @@ export default {
       const offsetTop = this.getOffsetTop(
         this.$refs[`exptinfo-view-${e.target.dataset.index}`]
       );
-
+      this.errinfoTabIndex = +e.target.dataset.index;
+      if (this.errinfoTabIndex > 1) {
+        this.isFixed = true;
+      }
       tween({
         from: { x: rootScrollElementScrollTop },
         to: { x: offsetTop - this.fixedHeight },
@@ -712,6 +726,10 @@ export default {
         document.documentElement.scrollTop = offsetTop - this.fixedHeight;
         this.errinfoTabIndex = +e.target.dataset.index;
         this.anchorChange = true;
+        this.isFixed = true;
+        if (this.errinfoTabIndex > 1) {
+          this.isFixed = true;
+        }
       });
     },
     //模拟系统信息数据
@@ -831,7 +849,12 @@ export default {
       for (let j = 0; j < this.errinfoCPUInfoTexts.length; j++) {
         const option = this.modifyChartsOptions4err(j);
         setTimeout(() => {
-          this.drawChart(option, this.errinfoCPUInfoTexts[j].ip);
+          this.drawChart(
+            option,
+            this.errinfoCPUInfoTexts[j].ip,
+            1,
+            this.errinfoCPUInfos[j].length - 1
+          );
         }, 300);
       }
       const keys = Object.keys(tmpd);
