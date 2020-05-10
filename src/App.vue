@@ -919,6 +919,7 @@ export default {
     },
     //查询系统信息(不带参数)
     query24hWithNoParams() {
+      console.log(`query24hWithNoParams`, process.env.NODE_ENV);
       if (process.env.NODE_ENV !== "local") {
         this.$axios({
           method: "get",
@@ -939,6 +940,7 @@ export default {
     },
     //查询系统信息(带参数)
     query24hWithParams(data) {
+      console.log(`query24hWithParams`, process.env.NODE_ENV);
       if (process.env.NODE_ENV !== "local") {
         this.$axios({
           method: "post",
@@ -959,6 +961,7 @@ export default {
       }
     },
     queryAppWithNoParams() {
+      console.log(`queryAppWithNoParams`, process.env.NODE_ENV);
       if (process.env.NODE_ENV !== "local") {
         this.$axios({
           method: "get",
@@ -978,6 +981,7 @@ export default {
       }
     },
     queryAppWithParams(data) {
+      console.log(`queryAppWithParams`, process.env.NODE_ENV);
       if (process.env.NODE_ENV !== "local") {
         this.$axios({
           method: "post",
@@ -999,6 +1003,7 @@ export default {
     },
     //查询异常信息的接口
     queryErrorInfo() {
+      console.log(`queryErrorInfo`, process.env.NODE_ENV);
       if (process.env.NODE_ENV !== "local") {
         this.$axios({
           method: "get",
