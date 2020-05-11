@@ -192,7 +192,7 @@
               <el-tag>CPU使用率</el-tag>
               <div
                 v-for="(item, index) in errinfoCPUInfoTexts"
-                :key="item.ip"
+                :key="item.id"
                 style="width:100%;position:relative"
               >
                 <div class="exptinfo-show-ip">IP: {{ item.ip }}</div>
@@ -205,7 +205,7 @@
                   ><span>%</span>
                 </div>
                 <div
-                  :id="item.ip"
+                  :id="item.id"
                   style="width: 100%;height:280px;box-sizing: border-box;padding-bottom:20px"
                 ></div>
                 <div class="line-4-echarts"></div>
@@ -389,6 +389,7 @@ export default {
     drawChart(option, id, seriesIndexs, dataIndex) {
       // 基于准备好的dom，初始化echarts实例;
       const myChart = this.$echarts.init(document.getElementById(id));
+      myChart.clear();
       myChart.setOption(option, true);
       setTimeout(() => {
         for (let i = 0; i < seriesIndexs; i++) {
@@ -577,8 +578,8 @@ export default {
             },
             grid: {
               top: 110,
-              left: 15,
-              right: 15,
+              left: -100,
+              right: 0,
               height: 160
             },
             series: [
@@ -645,12 +646,14 @@ export default {
           },
           trigger: "axis",
           formatter: info => {
-            const data = info[0].data;
-            // console.log(`data`,data,info)
+            const seriesId = info[0].seriesId;
+            this.errinfoCPUInfoTexts[seriesId].cpuRate = info[0].data[1];
+            this.errinfoCPUInfoTexts[seriesId].updateTime = info[0].data[0];
           }
         },
         series: [
           {
+            id: index,
             symbol: "emptyCircle",
             type: "line",
             smooth: true,
@@ -833,6 +836,7 @@ export default {
             shouldSet = true;
             tmps = {
               ip,
+              id: ip + Math.random(),
               cpuRate: tmpc[i][ip][j].cpu_rate,
               updateTime: tmpc[i][ip][j].update_time
             };
@@ -851,7 +855,7 @@ export default {
         setTimeout(() => {
           this.drawChart(
             option,
-            this.errinfoCPUInfoTexts[j].ip,
+            this.errinfoCPUInfoTexts[j].id,
             1,
             this.errinfoCPUInfos[j].length - 1
           );
@@ -923,10 +927,10 @@ export default {
       if (process.env.NODE_ENV !== "local") {
         this.$axios({
           method: "get",
-          url: "http://192.168.80.130:5001/mobile/server_manage/" // 接口地址
+          url: "/mobile/server_manage/" // 接口地址
         })
           .then(response => {
-            this.__noparamsof24h__ = response;
+            this.__noparamsof24h__ = response.data;
             this.mock4sys();
           })
           .catch(error => {
@@ -944,12 +948,12 @@ export default {
       if (process.env.NODE_ENV !== "local") {
         this.$axios({
           method: "post",
-          url: "http://192.168.80.130:5001/mobile/server_manage/", // 接口地址
+          url: "/mobile/server_manage/", // 接口地址
           data
         })
           .then(response => {
             console.log(response, "success"); // 成功的返回
-            this.__noparamsof24h__ = response;
+            this.__noparamsof24h__ = response.data;
             this.mock4sys(true);
           })
           .catch(error => {
@@ -965,10 +969,10 @@ export default {
       if (process.env.NODE_ENV !== "local") {
         this.$axios({
           method: "get",
-          url: "http://192.168.80.130:5001/mobile/server_manage/" // 接口地址
+          url: "/mobile/server_manage/" // 接口地址
         })
           .then(response => {
-            this.__noparamsofapp__ = response;
+            this.__noparamsofapp__ = response.data;
             this.mock4app();
           })
           .catch(error => {
@@ -985,12 +989,12 @@ export default {
       if (process.env.NODE_ENV !== "local") {
         this.$axios({
           method: "post",
-          url: "http://192.168.80.130:5001/mobile/server_manage/", // 接口地址
+          url: "/mobile/server_manage/", // 接口地址
           data
         })
           .then(response => {
             console.log(response, "success"); // 成功的返回
-            this.__noparamsofapp__ = response;
+            this.__noparamsofapp__ = response.data;
             this.mock4app(true);
           })
           .catch(error => {
@@ -1007,10 +1011,10 @@ export default {
       if (process.env.NODE_ENV !== "local") {
         this.$axios({
           method: "get",
-          url: "http://192.168.80.130:5001/mobile/error_info/" // 接口地址
+          url: "/mobile/error_info/" // 接口地址
         })
           .then(response => {
-            this.__errorInfo__ = response;
+            this.__errorInfo__ = response.data;
             this.mock4err();
           })
           .catch(error => {
