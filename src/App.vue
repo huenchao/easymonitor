@@ -408,7 +408,7 @@ export default {
         this.sysinfoViewTop = (+showDate[1] * 100).toFixed(0);
         this.sysinfoViewBottom = showDate[0];
         option = {
-          animation: false,
+          animation: true,
           tooltip: {
             triggerOn: "click",
             show: true,
@@ -683,17 +683,25 @@ export default {
 
       return option;
     },
-    changeChartsInSys(e) {
+    changeChartsInSys(e, index) {
       const domlists = document.querySelectorAll(".sysinfo-btn");
-      this.sysinfoTabIndex = +e.target.dataset.index;
+      this.sysinfoTabIndex =
+        typeof index !== "undefined" ? index : +e.target.dataset.index;
       for (let i = 0; i < domlists.length; i++) {
         if (domlists[i].classList.contains("active")) {
           domlists[i].classList.remove("active");
         }
       }
-      if (!e.target.classList.contains("active")) {
-        e.target.classList.add("active");
+      if (e) {
+        if (!e.target.classList.contains("active")) {
+          e.target.classList.add("active");
+        }
+      } else {
+        if (!domlists[index - 1].classList.contains("active")) {
+          domlists[index - 1].classList.add("active");
+        }
       }
+
       const option = this.modifyChartsOptions4sys(+this.sysinfoTabIndex);
       const serin = +this.sysinfoTabIndex === 3 ? 2 : 1;
       const len =
@@ -795,15 +803,34 @@ export default {
       this.sysinfoThreadInfo = tmpthread;
       if (!withP) {
         this.sysinfoValue = this.sysinfoIpLists[0];
+      } else {
+        this.sysinfoTabIndex = 1;
       }
 
-      const option = this.modifyChartsOptions4sys(1);
-      this.drawChart(
-        option,
-        "sysinfo-part3-echarts",
-        1,
-        this.sysinfoCPUInfo.length - 1
+      const myChart = this.$echarts.init(
+        document.getElementById("sysinfo-part3-echarts")
       );
+      myChart.clear();
+      myChart.setOption({});
+      setTimeout(() => {
+        this.changeChartsInSys(null, this.sysinfoTabIndex);
+        // if (this.sysinfoTabIndex) {
+        //   this.changeChartsInSys(null, this.sysinfoTabIndex);
+        // } else {
+        //   this.drawChart(
+        //     option,
+        //     "sysinfo-part3-echarts",
+        //     1,
+        //     this.sysinfoCPUInfo.length - 1
+        //   );
+        // }
+        // this.drawChart(
+        //   option,
+        //   "sysinfo-part3-echarts",
+        //   1,
+        //   this.sysinfoCPUInfo.length - 1
+        // );
+      });
     },
     mock4app(withP) {
       this.appinfoIpLists = this.__noparamsofapp__.data.ip_list;
