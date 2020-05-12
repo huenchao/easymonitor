@@ -67,30 +67,39 @@
                 SWAP信息
               </div>
             </div>
-            <div id="sysinfo-view">
-              <div id="sysinfo-part3-echarts-title">
-                <span
-                  v-if="sysinfoTabIndex === 1 || sysinfoTabIndex === 2"
-                  id="sysinfo-part3-echarts-title-g"
-                >
-                  {{ sysinfoViewTop }}</span
-                ><span v-if="sysinfoTabIndex === 1">%</span>
-                <span
-                  v-if="sysinfoTabIndex === 3"
-                  id="sysinfo-part3-echarts-title-r-g"
-                >
-                  <span class="sysinfoSwapInfoLv">{{ sysinfoSwapInfoLv }}</span>
-                  <span class="sysinfoSwapInfoLvGap">/</span>
-                  <span class="sysinfoSwapInfoRv">{{ sysinfoSwapInfoRv }}</span>
-                </span>
+            <div id="sysinfo-view-con">
+              <div id="sysinfo-view" v-show="showSysTemcharts">
+                <div id="sysinfo-part3-echarts-title">
+                  <span
+                    v-if="sysinfoTabIndex === 1 || sysinfoTabIndex === 2"
+                    id="sysinfo-part3-echarts-title-g"
+                  >
+                    {{ sysinfoViewTop }}</span
+                  ><span v-if="sysinfoTabIndex === 1">%</span>
+                  <span
+                    v-if="sysinfoTabIndex === 3"
+                    id="sysinfo-part3-echarts-title-r-g"
+                  >
+                    <span class="sysinfoSwapInfoLv">{{
+                      sysinfoSwapInfoLv
+                    }}</span>
+                    <span class="sysinfoSwapInfoLvGap">/</span>
+                    <span class="sysinfoSwapInfoRv">{{
+                      sysinfoSwapInfoRv
+                    }}</span>
+                  </span>
+                </div>
+                <div
+                  id="sysinfo-part3-echarts"
+                  style="width: 100%;height:280px;padding-bottom:10px"
+                ></div>
+                <div class="line-4-echarts"></div>
+                <div id="sysinfo-part3-echarts-bottom">
+                  {{ formatterday(sysinfoViewBottom) }}
+                </div>
               </div>
-              <div
-                id="sysinfo-part3-echarts"
-                style="width: 100%;height:280px;padding-bottom:10px"
-              ></div>
-              <div class="line-4-echarts"></div>
-              <div id="sysinfo-part3-echarts-bottom">
-                {{ formatterday(sysinfoViewBottom) }}
+              <div id="sysinfo-view2" v-show="!showSysTemcharts">
+                暂无数据
               </div>
             </div>
           </div>
@@ -312,6 +321,7 @@ export default {
       sysinfoIpLists: [],
       activeName: "sysinfo",
       sysinfoDiskInfo: [],
+      showSysTemcharts: false,
       appInfo: [],
       sysinfoCPUInfo: [],
       sysinfoSwapInfo: {
@@ -376,6 +386,8 @@ export default {
         ];
         const bar = document.querySelector(".el-tabs__active-bar.is-top");
         bar.style.transform = `translateX(${offset[index]}px)`;
+        this.sysinfoTabIndex = 1;
+        this.sysinfoSwitch = false;
         if (index == 0) {
           this.query24hWithNoParams();
         } else if (index == 1) {
@@ -388,7 +400,9 @@ export default {
     },
     drawChart(option, id, seriesIndexs, dataIndex) {
       // 基于准备好的dom，初始化echarts实例;
-      const myChart = this.$echarts.init(document.getElementById(id));
+      const myChart = this.$echarts.init(document.getElementById(id), null, {
+        width: 380
+      });
       myChart.clear();
       myChart.setOption(option, true);
       setTimeout(() => {
@@ -403,138 +417,142 @@ export default {
     },
     modifyChartsOptions4sys(index) {
       let option = {};
-      if (index === 1) {
-        const showDate = this.sysinfoCPUInfo[this.sysinfoCPUInfo.length - 1];
-        this.sysinfoViewTop = (+showDate[1] * 100).toFixed(0);
-        this.sysinfoViewBottom = showDate[0];
-        option = {
-          animation: true,
-          tooltip: {
-            triggerOn: "click",
-            show: true,
-            axisPointer: {
-              type: "none"
+      try {
+        if (index === 1) {
+          const showDate = this.sysinfoCPUInfo[this.sysinfoCPUInfo.length - 1];
+          this.sysinfoViewTop = (+showDate[1] * 100).toFixed(0);
+          this.sysinfoViewBottom = showDate[0];
+          option = {
+            animation: true,
+            tooltip: {
+              triggerOn: "click",
+              show: true,
+              axisPointer: {
+                type: "none"
+              },
+              trigger: "axis",
+              formatter: info => {
+                const data = info[0].data;
+                this.sysinfoViewTop = (+data[1] * 100).toFixed(0);
+                this.sysinfoViewBottom = data[0];
+              }
             },
-            trigger: "axis",
-            formatter: info => {
-              const data = info[0].data;
-              this.sysinfoViewTop = (+data[1] * 100).toFixed(0);
-              this.sysinfoViewBottom = data[0];
-            }
-          },
-          xAxis: {
-            type: "time",
-            show: false
-          },
-          yAxis: {
-            type: "value",
-            show: false
-          },
-          grid: {
-            top: 110,
-            left: 15,
-            right: 15,
-            height: 160
-          },
-          series: [
-            {
-              symbol: "emptyCircle",
-              type: "line",
-              smooth: true,
-              showSymbol: false,
-              symbolSize: 8,
-              sampling: "average",
-              itemStyle: {
-                color: "#8ec6ad"
-              },
-              stack: "a",
-              areaStyle: {
-                color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                  {
-                    offset: 0,
-                    color: "#8ec6ad"
-                  },
-                  {
-                    offset: 1,
-                    color: "#ffe"
-                  }
-                ])
-              },
-              data: this.sysinfoCPUInfo
-            }
-          ]
-        };
-      } else if (index === 2) {
-        const showDate = this.sysinfoThreadInfo[
-          this.sysinfoThreadInfo.length - 1
-        ];
-        this.sysinfoViewTop = (+showDate[1] * 100).toFixed(0);
-        this.sysinfoViewBottom = showDate[0];
-        option = {
-          animation: false,
-          tooltip: {
-            triggerOn: "click",
-            show: true,
-            trigger: "axis",
-            axisPointer: {
-              type: "none"
+            xAxis: {
+              type: "time",
+              show: false
             },
-            formatter: info => {
-              const data = info[0].data;
-              this.sysinfoViewTop = (+data[1] * 100).toFixed(0);
-              this.sysinfoViewBottom = data[0];
-            }
-          },
-          xAxis: {
-            type: "time",
-            show: false
-          },
-          yAxis: {
-            type: "value",
-            show: false
-          },
-          grid: {
-            top: 110,
-            left: 15,
-            right: 15,
-            height: 160
-          },
-          series: [
-            {
-              symbol: "emptyCircle",
-              type: "line",
-              smooth: true,
-              showSymbol: false,
-              symbolSize: 8,
-              sampling: "average",
-              itemStyle: {
-                color: "#8ec6ad"
+            yAxis: {
+              type: "value",
+              show: false
+            },
+            grid: {
+              top: 110,
+              left: 15,
+              right: 15,
+              height: 160
+            },
+            series: [
+              {
+                symbol: "emptyCircle",
+                type: "line",
+                smooth: true,
+                showSymbol: false,
+                symbolSize: 8,
+                sampling: "average",
+                itemStyle: {
+                  color: "#8ec6ad"
+                },
+                stack: "a",
+                areaStyle: {
+                  color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    {
+                      offset: 0,
+                      color: "#8ec6ad"
+                    },
+                    {
+                      offset: 1,
+                      color: "#ffe"
+                    }
+                  ])
+                },
+                data: this.sysinfoCPUInfo
+              }
+            ]
+          };
+        } else if (index === 2) {
+          const showDate = this.sysinfoThreadInfo[
+            this.sysinfoThreadInfo.length - 1
+          ];
+          this.sysinfoViewTop = (+showDate[1] * 100).toFixed(0);
+          this.sysinfoViewBottom = showDate[0];
+          option = {
+            animation: false,
+            tooltip: {
+              triggerOn: "click",
+              show: true,
+              trigger: "axis",
+              axisPointer: {
+                type: "none"
               },
-              stack: "a",
-              areaStyle: {
-                color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                  {
-                    offset: 0,
-                    color: "#8ec6ad"
-                  },
-                  {
-                    offset: 1,
-                    color: "#ffe"
-                  }
-                ])
-              },
-              data: this.sysinfoThreadInfo
-            }
-          ]
-        };
-      } else if (index === 3) {
-        (this.sysinfoSwapInfoLv = this.sysinfoSwapInfo.data1[
-          this.sysinfoSwapInfo.data1.length - 1
-        ]),
-          (this.sysinfoSwapInfoRv = this.sysinfoSwapInfo.data2[
+              formatter: info => {
+                const data = info[0].data;
+                this.sysinfoViewTop = (+data[1] * 100).toFixed(0);
+                this.sysinfoViewBottom = data[0];
+              }
+            },
+            xAxis: {
+              type: "time",
+              show: false
+            },
+            yAxis: {
+              type: "value",
+              show: false
+            },
+            grid: {
+              top: 110,
+              left: 15,
+              right: 15,
+              height: 160
+            },
+            series: [
+              {
+                symbol: "emptyCircle",
+                type: "line",
+                smooth: true,
+                showSymbol: false,
+                symbolSize: 8,
+                sampling: "average",
+                itemStyle: {
+                  color: "#8ec6ad"
+                },
+                stack: "a",
+                areaStyle: {
+                  color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    {
+                      offset: 0,
+                      color: "#8ec6ad"
+                    },
+                    {
+                      offset: 1,
+                      color: "#ffe"
+                    }
+                  ])
+                },
+                data: this.sysinfoThreadInfo
+              }
+            ]
+          };
+        } else if (index === 3) {
+          this.sysinfoSwapInfoLv = this.sysinfoSwapInfo.data1[
+            this.sysinfoSwapInfo.data1.length - 1
+          ];
+          this.sysinfoSwapInfoRv = this.sysinfoSwapInfo.data2[
             this.sysinfoSwapInfo.data2.length - 1
-          ]),
-          (option = {
+          ];
+          this.sysinfoViewBottom = this.sysinfoSwapInfo.x[
+            this.sysinfoSwapInfo.x.length - 1
+          ];
+          option = {
             legend: {
               left: "right",
               top: "10%",
@@ -565,6 +583,7 @@ export default {
               formatter: info => {
                 this.sysinfoSwapInfoLv = info[0].data;
                 this.sysinfoSwapInfoRv = info[1].data;
+                this.sysinfoViewBottom = info[0].axisValue;
               }
             },
             xAxis: {
@@ -616,7 +635,11 @@ export default {
                 }
               }
             ]
-          });
+          };
+        }
+        this.showSysTemcharts = true;
+      } catch (error) {
+        this.showSysTemcharts = false;
       }
       return option;
     },
@@ -710,6 +733,7 @@ export default {
           : +this.sysinfoTabIndex === 2
           ? this.sysinfoThreadInfo.length - 1
           : this.sysinfoCPUInfo.length - 1;
+      console.log(`serin:`, serin);
       this.drawChart(option, "sysinfo-part3-echarts", serin, len);
     },
     changeChartsInErr(e) {
@@ -808,28 +832,16 @@ export default {
       }
 
       const myChart = this.$echarts.init(
-        document.getElementById("sysinfo-part3-echarts")
+        document.getElementById("sysinfo-part3-echarts"),
+        null,
+        {
+          width: 380
+        }
       );
       myChart.clear();
       myChart.setOption({});
       setTimeout(() => {
         this.changeChartsInSys(null, this.sysinfoTabIndex);
-        // if (this.sysinfoTabIndex) {
-        //   this.changeChartsInSys(null, this.sysinfoTabIndex);
-        // } else {
-        //   this.drawChart(
-        //     option,
-        //     "sysinfo-part3-echarts",
-        //     1,
-        //     this.sysinfoCPUInfo.length - 1
-        //   );
-        // }
-        // this.drawChart(
-        //   option,
-        //   "sysinfo-part3-echarts",
-        //   1,
-        //   this.sysinfoCPUInfo.length - 1
-        // );
       });
     },
     mock4app(withP) {
